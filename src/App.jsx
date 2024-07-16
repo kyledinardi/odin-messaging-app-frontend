@@ -1,16 +1,15 @@
 import { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import Login from './components/Login.jsx';
 import Sidebar from './components/Sidebar.jsx';
 import Chat from './components/Chat.jsx';
 import UserList from './components/UserList.jsx';
 
 function App() {
   const [isAuth, setIsAuth] = useState(false);
-  const navigate = useNavigate();
   useEffect(() => setIsAuth(!!localStorage.getItem('token')), []);
 
   if (!isAuth) {
-    navigate('/login');
+    return <Login setIsAuth={(a) => setIsAuth(a)} />;
   }
 
   return (
