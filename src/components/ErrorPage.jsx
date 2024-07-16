@@ -1,4 +1,4 @@
-import Navbar from './Navbar.jsx';
+import Navbar from './Sidebar.jsx';
 
 function ErrorPage() {
   return (
