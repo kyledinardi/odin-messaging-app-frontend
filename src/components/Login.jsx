@@ -1,10 +1,10 @@
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { useState } from 'react';
-import PropTypes from 'prop-types';
 import styles from '../style/Form.module.css';
 
-function Login({ setIsAuth }) {
+function Login() {
   const [errorMessage, setErrorMessage] = useState('');
+  const navigate = useNavigate();
 
   async function submitLogin(e) {
     e.preventDefault();
@@ -27,7 +27,7 @@ function Login({ setIsAuth }) {
         setErrorMessage(response.message);
       } else {
         localStorage.setItem('token', response.token);
-        setIsAuth(true);
+        navigate('/');
       }
     } catch (err) {
       throw new Error(err);
@@ -50,9 +50,5 @@ function Login({ setIsAuth }) {
     </form>
   );
 }
-
-Login.propTypes = {
-  setIsAuth: PropTypes.func,
-};
 
 export default Login;
