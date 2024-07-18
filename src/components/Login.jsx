@@ -27,6 +27,7 @@ function Login() {
         setErrorMessage(response.message);
       } else {
         localStorage.setItem('token', response.token);
+        localStorage.setItem('userId', response.user._id);
         navigate('/');
       }
     } catch (err) {

@@ -22,7 +22,10 @@ function App() {
       <Sidebar />
       <Chat />
       <UserList setProfileOpen={(user) => setProfileOpen(user)} />
-      <Profile profileOpen={profileOpen} close={() => setProfileOpen(null)} />
+      <Profile
+        profileOpen={profileOpen}
+        setProfileOpen={(user) => setProfileOpen(user)}
+      />
     </>
   );
 }
