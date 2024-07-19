@@ -38,18 +38,18 @@ function Profile({ profileOpen, setProfileOpen }) {
     }
     if (profileOpen._id === localStorage.getItem('userId')) {
       return (
-        <>
+        <div>
           <p>{profileOpen.bio || ''}</p>
           <button onClick={() => setEdit(true)}>Edit Bio</button>
-        </>
+        </div>
       );
     }
 
     return (
-      <>
+      <div>
         <p>{profileOpen.bio || ''}</p>
         <button>Send Private Message</button>
-      </>
+      </div>
     );
   }
 
