@@ -34,6 +34,23 @@ function Chat({ room }) {
     setMessages([...messages, response]);
   }
 
+  async function deleteMessage(messageId) {
+    const responseStream = await fetch(
+      `http://localhost:3000/messages/${messageId}`,
+      {
+        method: 'DELETE',
+        mode: 'cors',
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem('token')}`,
+        },
+      },
+    );
+
+    const response = await responseStream.json();
+    console.log(response.msg);
+    setMessages(messages.filter((message) => message._id !== messageId));
+  }
+
   return (
     <main>
       {messages && room ? (
@@ -52,6 +69,14 @@ function Chat({ room }) {
                 <p>{message.sender.username}</p>
                 <p>{new Date(message.timestamp).toLocaleString()}</p>
                 <p>{message.text}</p>
+                {message.sender._id === localStorage.getItem('userId') && (
+                  <div>
+                    <button>Edit</button>
+                    <button onClick={() => deleteMessage(message._id)}>
+                      Delete
+                    </button>
+                  </div>
+                )}
               </div>
             ))}
           </div>
