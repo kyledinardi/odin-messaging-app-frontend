@@ -18,36 +18,84 @@ function Chat({ room }) {
     }
   }, [room]);
 
-  async function sendMessage() {
-    const responseStream = await fetch('http://localhost:3000/messages', {
-      method: 'POST',
-      mode: 'cors',
-      headers: {
-        Authorization: `Bearer ${localStorage.getItem('token')}`,
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ text: messageText, room: room._id }),
-    });
+  async function sendMessage(e) {
+    e.preventDefault();
 
-    const response = await responseStream.json();
-    setMessageText('');
-    setMessages([...messages, response]);
-  }
-
-  async function deleteMessage(messageId) {
-    const responseStream = await fetch(
-      `http://localhost:3000/messages/${messageId}`,
-      {
-        method: 'DELETE',
+    try {
+      const responseStream = await fetch('http://localhost:3000/messages', {
+        method: 'POST',
         mode: 'cors',
         headers: {
           Authorization: `Bearer ${localStorage.getItem('token')}`,
+          'Content-Type': 'application/json',
         },
-      },
+        body: JSON.stringify({ text: messageText, room: room._id }),
+      });
+
+      const response = await responseStream.json();
+      setMessageText('');
+      setMessages([...messages, response]);
+    } catch (err) {
+      throw new Error(err);
+    }
+  }
+
+  async function updateMessage(e, messageId) {
+    const messageToUpdate = messages.find(
+      (message) => message._id === messageId,
     );
 
-    const response = await responseStream.json();
-    console.log(response.msg);
+    let newMessages;
+
+    if (messageToUpdate.editing) {
+      e.preventDefault();
+
+      try {
+        const responseStream = await fetch(
+          `http://localhost:3000/messages/${messageId}`,
+          {
+            method: 'PUT',
+            mode: 'cors',
+            headers: {
+              Authorization: `Bearer ${localStorage.getItem('token')}`,
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ text: e.target[0].value }),
+          },
+        );
+
+        const response = await responseStream.json();
+
+        newMessages = messages.map((message) =>
+          message._id === messageId ? response : message,
+        );
+      } catch (err) {
+        throw new Error(err);
+      }
+    } else {
+      newMessages = messages.map((message) => {
+        if (message._id === messageId) {
+          return { ...message, editing: true };
+        }
+
+        return message;
+      });
+    }
+
+    setMessages(newMessages);
+  }
+
+  async function deleteMessage(messageId) {
+    await fetch(`http://localhost:3000/messages/${messageId}`, {
+      method: 'DELETE',
+      mode: 'cors',
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem('token')}`,
+      },
+    }).catch((err) => {
+      throw new Error(err);
+    });
+
     setMessages(messages.filter((message) => message._id !== messageId));
   }
 
@@ -68,19 +116,46 @@ function Chat({ room }) {
                 <img src={message.sender.pictureUrl || blankPfp} alt='' />
                 <p>{message.sender.username}</p>
                 <p>{new Date(message.timestamp).toLocaleString()}</p>
-                <p>{message.text}</p>
-                {message.sender._id === localStorage.getItem('userId') && (
+                {message.editing ? (
+                  <form onSubmit={(e) => updateMessage(e, message._id)}>
+                    <input
+                      type='text'
+                      name='messageUpdate'
+                      id='messageUpdate'
+                      defaultValue={message.text}
+                      required
+                    />
+                    {message.sender._id === localStorage.getItem('userId') && (
+                      <div>
+                        <button>Update</button>
+                        <button
+                          type='button'
+                          onClick={() => deleteMessage(message._id)}
+                        >
+                          Delete
+                        </button>
+                      </div>
+                    )}
+                  </form>
+                ) : (
                   <div>
-                    <button>Edit</button>
-                    <button onClick={() => deleteMessage(message._id)}>
-                      Delete
-                    </button>
+                    <p>{message.text}</p>
+                    {message.sender._id === localStorage.getItem('userId') && (
+                      <div>
+                        <button onClick={(e) => updateMessage(e, message._id)}>
+                          Update
+                        </button>
+                        <button onClick={() => deleteMessage(message._id)}>
+                          Delete
+                        </button>
+                      </div>
+                    )}
                   </div>
                 )}
               </div>
             ))}
           </div>
-          <div>
+          <form onSubmit={(e) => sendMessage(e)}>
             <input
               type='text'
               name='newMessage'
@@ -95,10 +170,8 @@ function Chat({ room }) {
               onChange={(e) => setMessageText(e.target.value)}
               required
             />
-            <button onClick={() => sendMessage()} disabled={!messageText}>
-              Send
-            </button>
-          </div>
+            <button disabled={!messageText}>Send</button>
+          </form>
         </>
       ) : (
         <h2>Loading messages...</h2>
