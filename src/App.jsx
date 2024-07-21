@@ -7,14 +7,15 @@ import Profile from './components/Profile.jsx';
 
 function App() {
   const [users, setUsers] = useState(null);
-  const [profileOpen, setProfileOpen] = useState(null);
-  const [room, setRoom] = useState(null);
+  const [openProfile, setOpenProfile] = useState(null);
+  const [rooms, setRooms] = useState(null);
+  const [openRoom, setOpenRoom] = useState(null);
   const navigate = useNavigate();
 
   useEffect(() => {
     Promise.all([
       fetch('http://localhost:3000/users', { mode: 'cors' }),
-      fetch('http://localhost:3000/rooms/669551549b1e2dd57344d631', {
+      fetch('http://localhost:3000/rooms', {
         mode: 'cors',
         headers: {
           Authorization: `Bearer ${localStorage.getItem('token')}`,
@@ -26,12 +27,42 @@ function App() {
       )
       .then((responses) => {
         setUsers(responses[0].users);
-        setRoom(responses[1]);
+        setRooms(responses[1].rooms);
+        setOpenRoom(responses[1].rooms.find((room) => room.name === 'General'));
       })
       .catch((err) => {
         throw new Error(err);
       });
-  }, [setUsers]);
+  }, []);
+
+  async function openPms(userId) {
+    const privateRoom = rooms.find((room) =>
+      room.users.every(
+        (user) => user._id === userId || localStorage.getItem('userId'),
+      ),
+    );
+
+    if (privateRoom) {
+      setOpenRoom(privateRoom);
+    } else {
+      const responseStream = await fetch('http://localhost:3000/rooms', {
+        method: 'POST',
+        mode: 'cors',
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem('token')}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          name: '',
+          isPublic: false,
+          users: [localStorage.getItem('userId'), userId],
+        }),
+      });
+      const response = await responseStream.json();
+      setRooms([...rooms, response]);
+      setOpenRoom(response);
+    }
+  }
 
   return (
     <>
@@ -43,16 +74,17 @@ function App() {
       >
         Log Out
       </button>
-      <Sidebar setRoom={(newRoom) => setRoom(newRoom)} />
-      <Chat room={room} />
+      <Sidebar rooms={rooms} setOpenRoom={(newRoom) => setOpenRoom(newRoom)} />
+      <Chat room={openRoom} />
       <UserList
         users={users}
         setUsers={(newUsers) => setUsers(newUsers)}
-        setProfileOpen={(user) => setProfileOpen(user)}
+        setOpenProfile={(user) => setOpenProfile(user)}
       />
       <Profile
-        profileOpen={profileOpen}
-        setProfileOpen={(user) => setProfileOpen(user)}
+        openPms={(userId) => openPms(userId)}
+        openProfile={openProfile}
+        setOpenProfile={(user) => setOpenProfile(user)}
       />
     </>
   );

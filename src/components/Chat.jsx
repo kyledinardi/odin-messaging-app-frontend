@@ -65,6 +65,15 @@ function Chat({ room }) {
     <main>
       {messages && room ? (
         <>
+          <h1>
+            {room.isPublic
+              ? `${room.name} Chat`
+              : `Chat with ${
+                  room.users.find(
+                    (user) => user._id !== localStorage.getItem('userId'),
+                  ).username
+                }`}
+          </h1>
           <div>
             {messages.map((message) => (
               <div

@@ -2,7 +2,7 @@ import PropTypes from 'prop-types';
 import { useState } from 'react';
 import blankPfp from '../img/blank-pfp.webp';
 
-function Profile({ profileOpen, setProfileOpen }) {
+function Profile({ openPms, openProfile, setOpenProfile }) {
   const [edit, setEdit] = useState(false);
 
   async function submitBio(e) {
@@ -20,26 +20,32 @@ function Profile({ profileOpen, setProfileOpen }) {
       });
 
       const response = await responseStream.json();
-      setProfileOpen(response);
+      setOpenProfile(response);
       setEdit(false);
     } catch (err) {
       throw new Error(err);
     }
   }
 
+  function sendPrivateMessage(userId) {
+    openPms(userId);
+    setOpenProfile(null);
+  }
+
   function renderBio() {
     if (edit) {
       return (
         <form onSubmit={(e) => submitBio(e)}>
-          <textarea defaultValue={profileOpen.bio || ''}></textarea>
+          <textarea defaultValue={openProfile.bio || ''}></textarea>
+          <button type='button' onClick={() => setEdit(false)}>Cancel</button>
           <button>Save Bio</button>
         </form>
       );
     }
-    if (profileOpen._id === localStorage.getItem('userId')) {
+    if (openProfile._id === localStorage.getItem('userId')) {
       return (
         <div>
-          <p>{profileOpen.bio || ''}</p>
+          <p>{openProfile.bio || ''}</p>
           <button onClick={() => setEdit(true)}>Edit Bio</button>
         </div>
       );
@@ -47,20 +53,22 @@ function Profile({ profileOpen, setProfileOpen }) {
 
     return (
       <div>
-        <p>{profileOpen.bio || ''}</p>
-        <button>Send Private Message</button>
+        <p>{openProfile.bio || ''}</p>
+        <button onClick={() => sendPrivateMessage(openProfile._id)}>
+          Send Private Message
+        </button>
       </div>
     );
   }
 
   return (
     <div>
-      {profileOpen && (
+      {openProfile && (
         <>
-          <img src={profileOpen.pictureUrl || blankPfp} alt='' />
-          <h2>{profileOpen.username}</h2>
+          <img src={openProfile.pictureUrl || blankPfp} alt='' />
+          <h2>{openProfile.username}</h2>
           {renderBio()}
-          <button onClick={() => setProfileOpen(false)}>Close</button>
+          <button onClick={() => setOpenProfile(null)}>Close</button>
         </>
       )}
     </div>
@@ -68,8 +76,9 @@ function Profile({ profileOpen, setProfileOpen }) {
 }
 
 Profile.propTypes = {
-  profileOpen: PropTypes.object,
-  setProfileOpen: PropTypes.func,
+  openPms: PropTypes.func,
+  openProfile: PropTypes.object,
+  setOpenProfile: PropTypes.func,
 };
 
 export default Profile;
