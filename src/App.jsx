@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import Sidebar from './components/Sidebar.jsx';
 import Chat from './components/Chat.jsx';
 import UserList from './components/UserList.jsx';
@@ -9,6 +10,7 @@ function App() {
   const [openProfile, setOpenProfile] = useState(null);
   const [rooms, setRooms] = useState(null);
   const [openRoom, setOpenRoom] = useState(null);
+  const navigate = useNavigate();
 
   useEffect(() => {
     Promise.all([
@@ -20,9 +22,13 @@ function App() {
         },
       }),
     ])
-      .then((responses) =>
-        Promise.all(responses.map((response) => response.json())),
-      )
+      .then((responses) => {
+        if (responses[1].status === 401) {
+          localStorage.clear()
+          navigate('/login');
+        }
+        return Promise.all(responses.map((response) => response.json()));
+      })
       .then((responses) => {
         setUsers(responses[0].users);
         setRooms(responses[1].rooms);
@@ -31,7 +37,7 @@ function App() {
       .catch((err) => {
         throw new Error(err);
       });
-  }, []);
+  }, [navigate]);
 
   async function openPms(userId) {
     const privateRoom = rooms.find((room) =>

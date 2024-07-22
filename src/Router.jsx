@@ -12,16 +12,15 @@ const routes = [
     loader: () => (localStorage.getItem('token') ? null : redirect('/login')),
   },
   {
-    path: '/login',
-    element: <Login />,
-    errorElement: <ErrorPage />,
-    loader: () => (localStorage.getItem('token') ? redirect('/') : null),
-  },
-  {
     path: '/sign-up',
     element: <SignUp />,
     errorElement: <ErrorPage />,
     loader: () => (localStorage.getItem('token') ? redirect('/') : null),
+  },
+  {
+    path: '/login',
+    element: <Login />,
+    errorElement: <ErrorPage />,
   },
 ];
 
