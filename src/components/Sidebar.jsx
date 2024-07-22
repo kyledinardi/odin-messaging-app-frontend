@@ -1,8 +1,33 @@
 import PropTypes from 'prop-types';
+import { useNavigate } from 'react-router-dom';
+import blankPfp from '../img/blank-pfp.webp';
 
-function Sidebar({ rooms, setOpenRoom }) {
+function Sidebar({ rooms, users, setOpenRoom, setOpenProfile }) {
+  const navigate = useNavigate();
+
   function filterRooms(isPublic) {
     return rooms.filter((room) => (isPublic ? room.isPublic : !room.isPublic));
+  }
+
+  function renderUserBox() {
+    if (users) {
+      const currentUser = users.find(
+        (user) => user._id === localStorage.getItem('userId'),
+      );
+
+      return (
+        currentUser && (
+          <div>
+            <button onClick={() => setOpenProfile(currentUser)}>
+              <img src={currentUser.pictureUrl || blankPfp} alt='' />
+              <p>{currentUser.username}</p>
+            </button>
+          </div>
+        )
+      );
+    }
+
+    return <h2>Loading user...</h2>;
   }
 
   return (
@@ -43,13 +68,24 @@ function Sidebar({ rooms, setOpenRoom }) {
       ) : (
         <h2>Loading rooms...</h2>
       )}
+      {renderUserBox()}
+      <button
+        onClick={() => {
+          localStorage.clear();
+          navigate('/login');
+        }}
+      >
+        Log Out
+      </button>
     </aside>
   );
 }
 
 Sidebar.propTypes = {
   rooms: PropTypes.array,
+  users: PropTypes.array,
   setOpenRoom: PropTypes.func,
+  setOpenProfile: PropTypes.func,
 };
 
 export default Sidebar;

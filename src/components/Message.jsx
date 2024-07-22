@@ -81,7 +81,7 @@ function Message({ message, changeMessages }) {
           <p>{message.text}</p>
           {message.sender._id === localStorage.getItem('userId') && (
             <div>
-              <button onClick={() => setEditing(true)}>Update</button>
+              <button onClick={() => setEditing(true)}>Edit</button>
               <button onClick={() => deleteMessage(message._id)}>Delete</button>
             </div>
           )}

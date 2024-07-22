@@ -1,4 +1,3 @@
-import { useNavigate } from 'react-router-dom';
 import { useState, useEffect } from 'react';
 import Sidebar from './components/Sidebar.jsx';
 import Chat from './components/Chat.jsx';
@@ -10,7 +9,6 @@ function App() {
   const [openProfile, setOpenProfile] = useState(null);
   const [rooms, setRooms] = useState(null);
   const [openRoom, setOpenRoom] = useState(null);
-  const navigate = useNavigate();
 
   useEffect(() => {
     Promise.all([
@@ -66,15 +64,12 @@ function App() {
 
   return (
     <>
-      <button
-        onClick={() => {
-          localStorage.clear();
-          navigate('/login');
-        }}
-      >
-        Log Out
-      </button>
-      <Sidebar rooms={rooms} setOpenRoom={(newRoom) => setOpenRoom(newRoom)} />
+      <Sidebar
+        rooms={rooms}
+        users={users}
+        setOpenRoom={(newRoom) => setOpenRoom(newRoom)}
+        setOpenProfile={(user) => setOpenProfile(user)}
+      />
       <Chat room={openRoom} />
       <UserList
         users={users}
