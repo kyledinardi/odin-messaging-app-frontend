@@ -8,46 +8,38 @@ function Message({ message, changeMessages }) {
   async function updateMessage(e, messageId) {
     e.preventDefault();
 
-    try {
-      const responseStream = await fetch(
-        `http://localhost:3000/messages/${messageId}`,
-        {
-          method: 'PUT',
-          mode: 'cors',
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem('token')}`,
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({ text: e.target[0].value }),
+    const responseStream = await fetch(
+      `http://localhost:3000/messages/${messageId}`,
+      {
+        method: 'PUT',
+        mode: 'cors',
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem('token')}`,
+          'Content-Type': 'application/json',
         },
-      );
+        body: JSON.stringify({ text: e.target[0].value }),
+      },
+    );
 
-      const response = await responseStream.json();
-      changeMessages(response, 'update');
-      setEditing(false);
-    } catch (err) {
-      throw new Error(err);
-    }
+    const response = await responseStream.json();
+    changeMessages(response, 'update');
+    setEditing(false);
   }
 
   async function deleteMessage(messageId) {
-    try {
-      const responseStream = await fetch(
-        `http://localhost:3000/messages/${messageId}`,
-        {
-          method: 'DELETE',
-          mode: 'cors',
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem('token')}`,
-          },
+    const responseStream = await fetch(
+      `http://localhost:3000/messages/${messageId}`,
+      {
+        method: 'DELETE',
+        mode: 'cors',
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem('token')}`,
         },
-      );
+      },
+    );
 
-      const response = responseStream.json();
-      changeMessages(response, 'delete');
-    } catch (err) {
-      throw new Error(err);
-    }
+    const response = await responseStream.json();
+    changeMessages(response, 'delete');
   }
 
   return (

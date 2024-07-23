@@ -9,6 +9,11 @@ function Sidebar({ rooms, users, setOpenRoom, setOpenProfile }) {
     return rooms.filter((room) => (isPublic ? room.isPublic : !room.isPublic));
   }
 
+  function setRoom(newRoom) {
+    setOpenRoom(newRoom);
+    localStorage.setItem('roomId', newRoom._id);
+  }
+
   function renderUserBox() {
     if (users) {
       const currentUser = users.find(
@@ -39,7 +44,7 @@ function Sidebar({ rooms, users, setOpenRoom, setOpenProfile }) {
             <ul>
               {filterRooms(true).map((publicRoom) => (
                 <li key={publicRoom._id}>
-                  <button onClick={() => setOpenRoom(publicRoom)}>
+                  <button onClick={() => setRoom(publicRoom)}>
                     {publicRoom.name}
                   </button>
                 </li>
@@ -52,7 +57,7 @@ function Sidebar({ rooms, users, setOpenRoom, setOpenProfile }) {
               <ul>
                 {filterRooms(false).map((privateRoom) => (
                   <li key={privateRoom._id}>
-                    <button onClick={() => setOpenRoom(privateRoom)}>
+                    <button onClick={() => setRoom(privateRoom)}>
                       {
                         privateRoom.users.find(
                           (user) => user._id !== localStorage.getItem('userId'),

@@ -29,7 +29,7 @@ function Chat({ room }) {
         break;
       case 'delete':
         newMessages = messages.filter(
-          (message) => message._id === messageToChange._id,
+          (message) => message._id !== messageToChange._id,
         );
         break;
       default:
@@ -86,8 +86,8 @@ function Chat({ room }) {
               >
                 <Message
                   message={message}
-                  changeMessages={(m, operation) =>
-                    changeMessages(m, operation)
+                  changeMessages={(messageToChange, operation) =>
+                    changeMessages(messageToChange, operation)
                   }
                 />
               </div>

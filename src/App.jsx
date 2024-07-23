@@ -28,8 +28,11 @@ function App() {
         return response.json();
       })
       .then((response) => {
+        const roomId =
+          localStorage.getItem('roomId') || '669551549b1e2dd57344d631';
+          
         setRooms(response.rooms);
-        setOpenRoom(response.rooms.find((room) => room.name === 'General'));
+        setOpenRoom(response.rooms.find((room) => room._id === roomId));
       });
   }, [navigate]);
 
