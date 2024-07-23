@@ -1,8 +1,10 @@
 import PropTypes from 'prop-types';
 import { useNavigate } from 'react-router-dom';
+import { useState } from 'react';
 import blankPfp from '../img/blank-pfp.webp';
 
-function Sidebar({ rooms, users, setOpenRoom, setOpenProfile }) {
+function Sidebar({ rooms, users, setOpenRoom, setOpenProfile, openNewRoom }) {
+  const [newRoomInputVisible, setNewRoomInputVisible] = useState(false);
   const navigate = useNavigate();
 
   function filterRooms(isPublic) {
@@ -12,6 +14,12 @@ function Sidebar({ rooms, users, setOpenRoom, setOpenProfile }) {
   function setRoom(newRoom) {
     setOpenRoom(newRoom);
     localStorage.setItem('roomId', newRoom._id);
+  }
+
+  async function createRoom(e) {
+    e.preventDefault();
+    openNewRoom(e.target[0].value, null);
+    setNewRoomInputVisible(false);
   }
 
   function renderUserBox() {
@@ -41,6 +49,18 @@ function Sidebar({ rooms, users, setOpenRoom, setOpenProfile }) {
         <div>
           <div>
             <h2>Public Chatrooms</h2>
+            {newRoomInputVisible ? (
+              <form onSubmit={(e) => createRoom(e)}>
+                <label htmlFor='name'>New Room Name: </label>
+                <input type='text' name='name' id='name' required />
+                <button>Create Room</button>
+              </form>
+            ) : (
+              <button onClick={() => setNewRoomInputVisible(true)}>
+                Create new chatroom
+              </button>
+            )}
+
             <ul>
               {filterRooms(true).map((publicRoom) => (
                 <li key={publicRoom._id}>
@@ -91,6 +111,7 @@ Sidebar.propTypes = {
   users: PropTypes.array,
   setOpenRoom: PropTypes.func,
   setOpenProfile: PropTypes.func,
+  openNewRoom: PropTypes.func,
 };
 
 export default Sidebar;

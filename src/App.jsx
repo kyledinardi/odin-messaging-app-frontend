@@ -30,22 +30,23 @@ function App() {
       .then((response) => {
         const roomId =
           localStorage.getItem('roomId') || '669551549b1e2dd57344d631';
-          
+
         setRooms(response.rooms);
         setOpenRoom(response.rooms.find((room) => room._id === roomId));
       });
   }, [navigate]);
 
   useEffect(() => {
-    function fetchUsers() {
-      fetch('http://localhost:3000/users', {
+    async function fetchUsers() {
+      const responseStream = await fetch('http://localhost:3000/users', {
         mode: 'cors',
         headers: {
           Authorization: `Bearer ${localStorage.getItem('token')}`,
         },
-      })
-        .then((response) => response.json())
-        .then((response) => setUsers(response.users));
+      });
+
+      const response = await responseStream.json();
+      setUsers(response.users);
     }
 
     fetchUsers();
@@ -57,15 +58,21 @@ function App() {
     return () => clearInterval(intervalId);
   }, []);
 
-  async function openPms(userId) {
-    const privateRoom = rooms.find((room) =>
-      room.users.every(
-        (user) => user._id === userId || localStorage.getItem('userId'),
-      ),
-    );
+  async function openNewRoom(name, userId) {
+    let oldRoom = null;
 
-    if (privateRoom) {
-      setOpenRoom(privateRoom);
+    if (name) {
+      oldRoom = rooms.find((room) => room.name === name);
+    } else if (userId) {
+      oldRoom = rooms.find((room) =>
+        room.users.every(
+          (user) => user._id === userId || localStorage.getItem('userId'),
+        ),
+      );
+    }
+
+    if (oldRoom) {
+      setOpenRoom(oldRoom);
     } else {
       const responseStream = await fetch('http://localhost:3000/rooms', {
         method: 'POST',
@@ -75,9 +82,9 @@ function App() {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          name: '',
-          isPublic: false,
-          users: [localStorage.getItem('userId'), userId],
+          name: name || '',
+          isPublic: !userId,
+          users: userId ? [localStorage.getItem('userId'), userId] : [],
         }),
       });
       const response = await responseStream.json();
@@ -93,6 +100,7 @@ function App() {
         users={users}
         setOpenRoom={(newRoom) => setOpenRoom(newRoom)}
         setOpenProfile={(user) => setOpenProfile(user)}
+        openNewRoom={(name, userId) => openNewRoom(name, userId)}
       />
       <Chat room={openRoom} />
       <UserList
@@ -101,7 +109,7 @@ function App() {
         setOpenProfile={(user) => setOpenProfile(user)}
       />
       <Profile
-        openPms={(userId) => openPms(userId)}
+        openNewRoom={(name, userId) => openNewRoom(name, userId)}
         openProfile={openProfile}
         setOpenProfile={(user) => setOpenProfile(user)}
       />
