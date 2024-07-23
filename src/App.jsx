@@ -13,31 +13,46 @@ function App() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    Promise.all([
-      fetch('http://localhost:3000/users', { mode: 'cors' }),
-      fetch('http://localhost:3000/rooms', {
+    fetch('http://localhost:3000/rooms', {
+      mode: 'cors',
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem('token')}`,
+      },
+    })
+      .then((response) => {
+        if (response.status === 401) {
+          localStorage.clear();
+          navigate('/login');
+        }
+
+        return response.json();
+      })
+      .then((response) => {
+        setRooms(response.rooms);
+        setOpenRoom(response.rooms.find((room) => room.name === 'General'));
+      });
+  }, [navigate]);
+
+  useEffect(() => {
+    function fetchUsers() {
+      fetch('http://localhost:3000/users', {
         mode: 'cors',
         headers: {
           Authorization: `Bearer ${localStorage.getItem('token')}`,
         },
-      }),
-    ])
-      .then((responses) => {
-        if (responses[1].status === 401) {
-          localStorage.clear()
-          navigate('/login');
-        }
-        return Promise.all(responses.map((response) => response.json()));
       })
-      .then((responses) => {
-        setUsers(responses[0].users);
-        setRooms(responses[1].rooms);
-        setOpenRoom(responses[1].rooms.find((room) => room.name === 'General'));
-      })
-      .catch((err) => {
-        throw new Error(err);
-      });
-  }, [navigate]);
+        .then((response) => response.json())
+        .then((response) => setUsers(response.users));
+    }
+
+    fetchUsers();
+
+    const intervalId = setInterval(() => {
+      fetchUsers();
+    }, 300000);
+
+    return () => clearInterval(intervalId);
+  }, []);
 
   async function openPms(userId) {
     const privateRoom = rooms.find((room) =>
