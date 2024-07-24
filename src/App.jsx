@@ -63,14 +63,15 @@ function App() {
 
     if (name) {
       oldRoom = rooms.find((room) => room.name === name);
-    } else if (userId) {
+    }
+    if (userId) {
       oldRoom = rooms.find((room) =>
         room.users.every(
-          (user) => user._id === userId || localStorage.getItem('userId'),
+          (user) =>
+            user._id === userId || user._id === localStorage.getItem('userId'),
         ),
       );
     }
-
     if (oldRoom) {
       setOpenRoom(oldRoom);
     } else {
@@ -87,6 +88,7 @@ function App() {
           users: userId ? [localStorage.getItem('userId'), userId] : [],
         }),
       });
+
       const response = await responseStream.json();
       setRooms([...rooms, response]);
       setOpenRoom(response);

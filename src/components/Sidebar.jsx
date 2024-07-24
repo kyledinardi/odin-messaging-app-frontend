@@ -53,6 +53,12 @@ function Sidebar({ rooms, users, setOpenRoom, setOpenProfile, openNewRoom }) {
               <form onSubmit={(e) => createRoom(e)}>
                 <label htmlFor='name'>New Room Name: </label>
                 <input type='text' name='name' id='name' required />
+                <button
+                  type='button'
+                  onClick={() => setNewRoomInputVisible(false)}
+                >
+                  Cancel
+                </button>
                 <button>Create Room</button>
               </form>
             ) : (

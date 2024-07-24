@@ -63,7 +63,7 @@ function Chat({ room }) {
 
   return (
     <main>
-      {messages && room ? (
+      {messages ? (
         <>
           <h1>
             {room.isPublic
