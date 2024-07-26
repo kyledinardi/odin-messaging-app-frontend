@@ -12,6 +12,7 @@ function Profile({
   const [edit, setEdit] = useState(false);
   const [deleting, setDeleting] = useState(false);
   const [changingPfp, setChangingPfp] = useState(false);
+  const [newImage, setNewImage] = useState(null);
   const navigate = useNavigate();
 
   async function submitBio(e) {
@@ -73,54 +74,32 @@ function Profile({
     );
   }
 
-  function renderBio() {
-    if (edit) {
-      return (
-        <form onSubmit={(e) => submitBio(e)}>
-          <textarea defaultValue={openProfile.bio || ''}></textarea>
-          <button type='button' onClick={() => setEdit(false)}>
-            Cancel
-          </button>
-          <button>Save Bio</button>
-        </form>
-      );
+  function handleFileInputChange(e) {
+    if (e.target.value !== '') {
+      setChangingPfp(true);
+      setNewImage(e.target.files[0]);
     }
-    if (openProfile._id === localStorage.getItem('userId')) {
-      return (
-        <div>
-          <button onClick={() => setEdit(true)}>Edit Bio</button>
-          <button onClick={() => setDeleting(true)}>Delete Account</button>
-          {deleting && (
-            <div>
-              <p>Are you sure you want to delete your account?</p>
-              <button onClick={() => deleteUser()}>Yes</button>
-              <button onClick={() => setDeleting(false)}>No</button>
-            </div>
-          )}
-          <p>{openProfile.bio || ''}</p>
-        </div>
-      );
-    }
+  }
 
-    return (
-      <div>
-        <button onClick={() => sendPrivateMessage(openProfile._id)}>
-          Send Private Message
-        </button>
-        <p>{openProfile.bio || ''}</p>
-      </div>
-    );
+  function cancelPfpChange() {
+    setChangingPfp(false);
+    setNewImage(null);
   }
 
   return (
     <div>
       {openProfile && (
         <>
-          <img src={openProfile.pictureUrl} alt='' />
+          <img
+            src={
+              newImage ? URL.createObjectURL(newImage) : openProfile.pictureUrl
+            }
+            alt=''
+          />
           {openProfile._id === localStorage.getItem('userId') && (
             <form encType='multipart/form-data' onSubmit={(e) => changePfp(e)}>
               <input
-                onChange={() => setChangingPfp(true)}
+                onChange={(e) => handleFileInputChange(e)}
                 type='file'
                 name='newPfp'
                 id='newPfp'
@@ -131,11 +110,49 @@ function Profile({
               <button type='button'>
                 <label htmlFor='newPfp'>Upload New Profile Picture</label>
               </button>
-              {changingPfp && <button>Change Profile Picture</button>}
+              {changingPfp && (
+                <>
+                  <button>Save</button>
+                  <button type='button' onClick={() => cancelPfpChange()}>
+                    Cancel
+                  </button>
+                </>
+              )}
             </form>
           )}
           <h2>{openProfile.username}</h2>
-          {renderBio()}
+          {edit ? (
+            <form onSubmit={(e) => submitBio(e)}>
+              <textarea defaultValue={openProfile.bio || ''}></textarea>
+              <button type='button' onClick={() => setEdit(false)}>
+                Cancel
+              </button>
+              <button>Save Bio</button>
+            </form>
+          ) : (
+            <div>
+              {openProfile._id === localStorage.getItem('userId') ? (
+                <>
+                  <button onClick={() => setEdit(true)}>Edit Bio</button>
+                  <button onClick={() => setDeleting(true)}>
+                    Delete Account
+                  </button>
+                  {deleting && (
+                    <div>
+                      <p>Are you sure you want to delete your account?</p>
+                      <button onClick={() => deleteUser()}>Yes</button>
+                      <button onClick={() => setDeleting(false)}>No</button>
+                    </div>
+                  )}
+                </>
+              ) : (
+                <button onClick={() => sendPrivateMessage(openProfile._id)}>
+                  Send Private Message
+                </button>
+              )}
+              <p>{openProfile.bio || ''}</p>
+            </div>
+          )}
           <button onClick={() => setOpenProfile(null)}>Close</button>
         </>
       )}
