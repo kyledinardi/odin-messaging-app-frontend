@@ -114,6 +114,8 @@ function App() {
         openNewRoom={(name, userId) => openNewRoom(name, userId)}
         openProfile={openProfile}
         setOpenProfile={(user) => setOpenProfile(user)}
+        users={users}
+        setUsers={(newUsers) => setUsers(newUsers)}
       />
     </>
   );

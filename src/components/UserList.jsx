@@ -1,5 +1,4 @@
 import PropTypes from 'prop-types';
-import blankPfp from '../img/blank-pfp.webp';
 import styles from '../style/UserList.module.css';
 
 function UserList({ users, setOpenProfile }) {
@@ -18,7 +17,7 @@ function UserList({ users, setOpenProfile }) {
             {filterUsersByStatus(true).map((user) => (
               <li key={user._id}>
                 <button onClick={() => setOpenProfile(user)}>
-                  <img src={user.pictureUrl || blankPfp} alt='' />
+                  <img src={user.pictureUrl} alt='' />
                   <p>{user.username}</p>
                 </button>
               </li>
@@ -29,7 +28,7 @@ function UserList({ users, setOpenProfile }) {
             {filterUsersByStatus(false).map((user) => (
               <li key={user._id}>
                 <button onClick={() => setOpenProfile(user)}>
-                  <img src={user.pictureUrl || blankPfp} alt='' />
+                  <img src={user.pictureUrl} alt='' />
                   <p>{user.username}</p>
                 </button>
               </li>

@@ -1,11 +1,17 @@
 import PropTypes from 'prop-types';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import blankPfp from '../img/blank-pfp.webp';
 
-function Profile({ openNewRoom, openProfile, setOpenProfile }) {
+function Profile({
+  openNewRoom,
+  openProfile,
+  setOpenProfile,
+  users,
+  setUsers,
+}) {
   const [edit, setEdit] = useState(false);
   const [deleting, setDeleting] = useState(false);
+  const [changingPfp, setChangingPfp] = useState(false);
   const navigate = useNavigate();
 
   async function submitBio(e) {
@@ -22,6 +28,7 @@ function Profile({ openNewRoom, openProfile, setOpenProfile }) {
     });
 
     const response = await responseStream.json();
+    setUsers(users.map((user) => (user === response._id ? response : user)));
     setOpenProfile(response);
     setEdit(false);
   }
@@ -32,7 +39,7 @@ function Profile({ openNewRoom, openProfile, setOpenProfile }) {
   }
 
   async function deleteUser() {
-    await fetch(`http://localhost:3000/users`, {
+    await fetch('http://localhost:3000/users', {
       method: 'DELETE',
       mode: 'cors',
       headers: {
@@ -42,6 +49,28 @@ function Profile({ openNewRoom, openProfile, setOpenProfile }) {
 
     localStorage.clear();
     navigate('/login');
+  }
+
+  async function changePfp(e) {
+    e.preventDefault();
+    const formData = new FormData();
+    formData.append('newPfp', e.target[0].files[0]);
+
+    const responseStream = await fetch('http://localhost:3000/users/picture', {
+      method: 'PUT',
+      mode: 'cors',
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem('token')}`,
+      },
+      body: formData,
+    });
+
+    const response = await responseStream.json();
+    setChangingPfp(false);
+    setOpenProfile(response);
+    setUsers(
+      users.map((user) => (user._id === response._id ? response : user)),
+    );
   }
 
   function renderBio() {
@@ -87,7 +116,24 @@ function Profile({ openNewRoom, openProfile, setOpenProfile }) {
     <div>
       {openProfile && (
         <>
-          <img src={openProfile.pictureUrl || blankPfp} alt='' />
+          <img src={openProfile.pictureUrl} alt='' />
+          {openProfile._id === localStorage.getItem('userId') && (
+            <form encType='multipart/form-data' onSubmit={(e) => changePfp(e)}>
+              <input
+                onChange={() => setChangingPfp(true)}
+                type='file'
+                name='newPfp'
+                id='newPfp'
+                accept='image/*'
+                required
+                hidden
+              />
+              <button type='button'>
+                <label htmlFor='newPfp'>Upload New Profile Picture</label>
+              </button>
+              {changingPfp && <button>Change Profile Picture</button>}
+            </form>
+          )}
           <h2>{openProfile.username}</h2>
           {renderBio()}
           <button onClick={() => setOpenProfile(null)}>Close</button>
@@ -101,6 +147,8 @@ Profile.propTypes = {
   openNewRoom: PropTypes.func,
   openProfile: PropTypes.object,
   setOpenProfile: PropTypes.func,
+  users: PropTypes.array,
+  setUsers: PropTypes.func,
 };
 
 export default Profile;

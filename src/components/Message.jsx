@@ -1,6 +1,5 @@
 import PropTypes from 'prop-types';
 import { useState } from 'react';
-import blankPfp from '../img/blank-pfp.webp';
 
 function Message({ message, changeMessages }) {
   const [editing, setEditing] = useState(false);
@@ -44,7 +43,7 @@ function Message({ message, changeMessages }) {
 
   return (
     <>
-      <img src={message.sender.pictureUrl || blankPfp} alt='' />
+      <img src={message.sender.pictureUrl} alt='' />
       <p>{message.sender.username}</p>
       <p>{new Date(message.timestamp).toLocaleString()}</p>
       {editing ? (

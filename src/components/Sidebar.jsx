@@ -1,7 +1,6 @@
 import PropTypes from 'prop-types';
 import { useNavigate } from 'react-router-dom';
 import { useState } from 'react';
-import blankPfp from '../img/blank-pfp.webp';
 
 function Sidebar({ rooms, users, setOpenRoom, setOpenProfile, openNewRoom }) {
   const [newRoomInputVisible, setNewRoomInputVisible] = useState(false);
@@ -32,7 +31,7 @@ function Sidebar({ rooms, users, setOpenRoom, setOpenProfile, openNewRoom }) {
         currentUser && (
           <div>
             <button onClick={() => setOpenProfile(currentUser)}>
-              <img src={currentUser.pictureUrl || blankPfp} alt='' />
+              <img src={currentUser.pictureUrl} alt='' />
               <p>{currentUser.username}</p>
             </button>
           </div>
