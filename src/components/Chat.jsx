@@ -5,7 +5,8 @@ import styles from '../style/Chat.module.css';
 
 function Chat({ room }) {
   const [messages, setMessages] = useState(null);
-  const [messageText, setMessageText] = useState('');
+  const [isMessage, setIsMessage] = useState('');
+  const [messageImage, setMessageImage] = useState(null);
 
   useEffect(() => {
     if (room) {
@@ -41,24 +42,37 @@ function Chat({ room }) {
 
   async function sendMessage(e) {
     e.preventDefault();
+    const formData = new FormData();
 
-    try {
-      const responseStream = await fetch('http://localhost:3000/messages', {
-        method: 'POST',
-        mode: 'cors',
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem('token')}`,
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ text: messageText, room: room._id }),
-      });
+    formData.append('messageImage', e.target[0].files[0]);
+    formData.append('messageText', e.target[1].value);
+    formData.append('roomId', room._id);
 
-      const response = await responseStream.json();
-      setMessageText('');
-      setMessages([...messages, response]);
-    } catch (err) {
-      throw new Error(err);
+    const responseStream = await fetch('http://localhost:3000/messages', {
+      method: 'POST',
+      mode: 'cors',
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem('token')}`,
+      },
+      body: formData,
+    });
+
+    const response = await responseStream.json();
+    e.target.reset();
+    setIsMessage(false);
+    setMessages([...messages, response]);
+  }
+
+  function handleFileInputChange(e) {
+    if (e.target.value !== '') {
+      setIsMessage(true);
+      setMessageImage(e.target.files[0]);
     }
+  }
+
+  function cancelMessageImage() {
+    setIsMessage(false);
+    setMessageImage(null);
   }
 
   return (
@@ -94,6 +108,22 @@ function Chat({ room }) {
             ))}
           </div>
           <form onSubmit={(e) => sendMessage(e)}>
+            {messageImage && (
+              <img src={URL.createObjectURL(messageImage)} alt='' />
+            )}
+            <input
+              type='file'
+              name='messageImage'
+              id='messageImage'
+              onChange={(e) => handleFileInputChange(e)}
+              hidden
+            />
+            <label htmlFor='messageImage'>Upload Image</label>
+            {messageImage && (
+              <button type='button' onClick={() => cancelMessageImage()}>
+                Cancel
+              </button>
+            )}
             <input
               type='text'
               name='newMessage'
@@ -104,11 +134,10 @@ function Chat({ room }) {
                   (user) => user._id !== localStorage.getItem('userId'),
                 ).username
               }`}
-              value={messageText}
-              onChange={(e) => setMessageText(e.target.value)}
+              onChange={(e) => setIsMessage(e.target.value !== '')}
               required
             />
-            <button disabled={!messageText}>Send</button>
+            <button disabled={!isMessage}>Send</button>
           </form>
         </>
       ) : (

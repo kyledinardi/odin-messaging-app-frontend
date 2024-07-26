@@ -55,6 +55,7 @@ function Message({ message, changeMessages }) {
             defaultValue={message.text}
             required
           />
+          {message.imageUrl && <img src={message.imageUrl} alt='' />}
           {message.sender._id === localStorage.getItem('userId') && (
             <div>
               <button>Update</button>
@@ -70,6 +71,7 @@ function Message({ message, changeMessages }) {
       ) : (
         <div>
           <p>{message.text}</p>
+          {message.imageUrl && <img src={message.imageUrl} alt='' />}
           {message.sender._id === localStorage.getItem('userId') && (
             <div>
               <button onClick={() => setEditing(true)}>Edit</button>
