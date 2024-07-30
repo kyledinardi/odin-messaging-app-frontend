@@ -1,0 +1,21 @@
+.userList {
+  background-color: dimgray;
+  color: white;
+}
+
+.listSegment {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin: 20px 0;
+}
+
+.userButton {
+  width: 280px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 1rem;
+  background-color: silver;
+  border: none;
+}

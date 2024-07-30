@@ -1,12 +1,15 @@
 import PropTypes from 'prop-types';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import Message from './Message.jsx';
 import styles from '../style/Chat.module.css';
 
 function Chat({ room }) {
   const [messages, setMessages] = useState(null);
-  const [isMessage, setIsMessage] = useState('');
+  const [isMessage, setIsMessage] = useState(false);
   const [messageImage, setMessageImage] = useState(null);
+  const messageForm = useRef(null);
+  const messagesEndRef = useRef(null);
+  const fileInputRef = useRef(null);
 
   useEffect(() => {
     if (room) {
@@ -18,6 +21,12 @@ function Chat({ room }) {
         });
     }
   }, [room]);
+
+  useEffect(() => {
+    if (messagesEndRef.current) {
+      messagesEndRef.current.scrollIntoView({ behavior: 'smooth' });
+    }
+  }, [messages]);
 
   function changeMessages(messageToChange, operation) {
     let newMessages;
@@ -45,7 +54,7 @@ function Chat({ room }) {
     const formData = new FormData();
 
     formData.append('messageImage', e.target[0].files[0]);
-    formData.append('messageText', e.target[1].value);
+    formData.append('messageText', e.target[2].value);
     formData.append('roomId', room._id);
 
     const responseStream = await fetch('http://localhost:3000/messages', {
@@ -60,23 +69,30 @@ function Chat({ room }) {
     const response = await responseStream.json();
     e.target.reset();
     setIsMessage(false);
+    setMessageImage(null);
     setMessages([...messages, response]);
+  }
+
+  function handleInputChange() {
+    setIsMessage(messageForm.current[0].value || messageForm.current[2].value);
   }
 
   function handleFileInputChange(e) {
     if (e.target.value !== '') {
-      setIsMessage(true);
       setMessageImage(e.target.files[0]);
     }
+
+    handleInputChange();
   }
 
   function cancelMessageImage() {
-    setIsMessage(false);
+    fileInputRef.current.value = '';
     setMessageImage(null);
+    handleInputChange();
   }
 
   return (
-    <main>
+    <main className={styles.chat}>
       {messages ? (
         <>
           <h1>
@@ -88,7 +104,8 @@ function Chat({ room }) {
                   ).username
                 }`}
           </h1>
-          <div>
+          <div className={styles.messageList}>
+            <div className={styles.empty}></div>
             {messages.map((message) => (
               <div
                 key={message._id}
@@ -106,24 +123,48 @@ function Chat({ room }) {
                 />
               </div>
             ))}
+            <div ref={messagesEndRef}></div>
           </div>
-          <form onSubmit={(e) => sendMessage(e)}>
-            {messageImage && (
+          {messageImage && (
+            <div className={styles.messageImage}>
               <img src={URL.createObjectURL(messageImage)} alt='' />
-            )}
+              <button
+                className='svgButton'
+                onClick={() => cancelMessageImage()}
+              >
+                <svg
+                  xmlns='http://www.w3.org/2000/svg'
+                  viewBox='0 -960 960 960'
+                >
+                  <path d='m256-200-56-56 224-224-224-224 56-56 224 224 224-224 56 56-224 224 224 224-56 56-224-224-224 224Z' />
+                </svg>
+              </button>
+            </div>
+          )}
+          <form
+            ref={messageForm}
+            onSubmit={(e) => sendMessage(e)}
+            className={styles.messageForm}
+          >
             <input
               type='file'
               name='messageImage'
               id='messageImage'
+              accept='image/*'
+              ref={fileInputRef}
               onChange={(e) => handleFileInputChange(e)}
               hidden
             />
-            <label htmlFor='messageImage'>Upload Image</label>
-            {messageImage && (
-              <button type='button' onClick={() => cancelMessageImage()}>
-                Cancel
-              </button>
-            )}
+            <button type='button' className='svgButton'>
+              <label htmlFor='messageImage'>
+                <svg
+                  xmlns='http://www.w3.org/2000/svg'
+                  viewBox='0 -960 960 960'
+                >
+                  <path d='M440-200h80v-167l64 64 56-57-160-160-160 160 57 56 63-63v167ZM240-80q-33 0-56.5-23.5T160-160v-640q0-33 23.5-56.5T240-880h320l240 240v480q0 33-23.5 56.5T720-80H240Zm280-520v-200H240v640h480v-440H520ZM240-800v200-200 640-640Z' />
+                </svg>
+              </label>
+            </button>
             <input
               type='text'
               name='newMessage'
@@ -134,10 +175,17 @@ function Chat({ room }) {
                   (user) => user._id !== localStorage.getItem('userId'),
                 ).username
               }`}
-              onChange={(e) => setIsMessage(e.target.value !== '')}
+              onChange={() => handleInputChange()}
               required
             />
-            <button disabled={!isMessage}>Send</button>
+            <button
+              className={`svgButton ${styles.sendButton}`}
+              disabled={!isMessage}
+            >
+              <svg xmlns='http://www.w3.org/2000/svg' viewBox='0 -960 960 960'>
+                <path d='M120-160v-640l760 320-760 320Zm80-120 474-200-474-200v140l240 60-240 60v140Zm0 0v-400 400Z' />
+              </svg>
+            </button>
           </form>
         </>
       ) : (

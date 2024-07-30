@@ -1,4 +1,65 @@
-img {
+/* colors: #1f0322, #8a1c7c, #da4167, #f0bcd4, #899d78 */
+
+:root,
+body,
+#root {
+  height: 100%;
+}
+
+:root {
+  font-family: Arial, Helvetica, sans-serif;
+  background-color: silver;
+}
+
+body,
+h1,
+h2,
+p,
+ul {
+  margin: 0;
+}
+
+.app {
+  display: grid;
+  grid-template-columns: 1fr 2fr 1fr;
+}
+
+aside,
+main {
+  padding: 30px;
+}
+
+textarea {
+  font: inherit;
+}
+
+ul {
+  list-style-type: none;
+  padding: 0;
+}
+
+button {
+  cursor: pointer;
+  background-color: white;
+  border-radius: 5px;
+  border: none;
+  padding: 5px 10px;
+}
+
+label {
+  cursor: pointer;
+}
+
+.profilePicture {
   width: 50px;
-  height: auto;
+  height: 50px;
+  object-fit: cover;
+  border-radius: 50%;
+}
+
+.svgButton {
+  width: 34px;
+  height: 34px;
+  padding: 5px;
+  border-radius: 50%;
 }

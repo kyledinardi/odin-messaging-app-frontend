@@ -1,0 +1,42 @@
+.profile {
+  border-radius: 20px;
+  border: none;
+  max-width: 600px;
+  padding: 30px;
+  background-color: dimgray;
+  color: white;
+  position: relative;
+}
+
+.imageAndName {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  margin-right: 50px;
+}
+
+.buttons {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  margin: 20px;
+  justify-content: center;
+}
+
+.closeButton {
+  position: absolute;
+  top: 30px;
+  right: 30px;
+}
+
+.bioInput {
+  width: 100%;
+}
+
+.pmButton {
+  margin-top: 20px;
+}
+
+.deleteConfirm {
+  text-align: center;
+}

@@ -36,19 +36,21 @@ function Login() {
   }
 
   return (
-    <form onSubmit={(e) => submitLogin(e)}>
-      <div className={styles.fields}>
-        <label htmlFor='username'>Username:</label>
-        <input type='text' name='username' id='username' required />
-        <label htmlFor='password'>Password:</label>
-        <input type='password' name='password' id='password' required />
-      </div>
-      <div className={styles.error}>{errorMessage}</div>
-      <div>
-        No account? <Link to='/sign-up'>Sign Up</Link>
-      </div>
-      <button>Log In</button>
-    </form>
+    <div className={styles.container}>
+      <form className={styles.form} onSubmit={(e) => submitLogin(e)}>
+        <div className={styles.fields}>
+          <label htmlFor='username'>Username</label>
+          <input type='text' name='username' id='username' required />
+          <label htmlFor='password'>Password</label>
+          <input type='password' name='password' id='password' required />
+        </div>
+        <div className={styles.error}>{errorMessage}</div>
+        <div className={styles.signUp}>
+          No account? <Link to='/sign-up'>Sign Up</Link>
+        </div>
+        <button className={styles.submitButton}>Log In</button>
+      </form>
+    </div>
   );
 }
 

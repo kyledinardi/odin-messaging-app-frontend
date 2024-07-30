@@ -10,31 +10,47 @@ function UserList({ users, setOpenProfile }) {
 
   return (
     <aside className={styles.userList}>
-      {users && (
+      {users ? (
         <>
           <h2>Online</h2>
-          <ul>
+          <ul className={styles.listSegment}>
             {filterUsersByStatus(true).map((user) => (
               <li key={user._id}>
-                <button onClick={() => setOpenProfile(user)}>
-                  <img src={user.pictureUrl} alt='' />
+                <button
+                  className={styles.userButton}
+                  onClick={() => setOpenProfile(user)}
+                >
+                  <img
+                    className='profilePicture'
+                    src={user.pictureUrl}
+                    alt=''
+                  />
                   <p>{user.username}</p>
                 </button>
               </li>
             ))}
           </ul>
           <h2>Offline</h2>
-          <ul>
+          <ul className={styles.listSegment}>
             {filterUsersByStatus(false).map((user) => (
               <li key={user._id}>
-                <button onClick={() => setOpenProfile(user)}>
-                  <img src={user.pictureUrl} alt='' />
+                <button
+                  className={styles.userButton}
+                  onClick={() => setOpenProfile(user)}
+                >
+                  <img
+                    className='profilePicture'
+                    src={user.pictureUrl}
+                    alt=''
+                  />
                   <p>{user.username}</p>
                 </button>
               </li>
             ))}
           </ul>
         </>
+      ) : (
+        <h2>Loading Users...</h2>
       )}
     </aside>
   );

@@ -1,0 +1,36 @@
+.container {
+  height: 100%;
+  display: grid;
+  justify-items: center;
+  align-items: center;
+}
+
+.form {
+  width: max-content;
+  font-size: 1.2rem;
+}
+
+.fields {
+  display: grid;
+  grid-template-columns: max-content 1fr;
+  gap: 10px;
+  align-items: center;
+}
+
+.fields label {
+  text-align: end;
+}
+
+.signUp {
+  text-align: center;
+}
+
+.fields, .signUp {
+  margin-bottom: 30px;
+}
+
+.submitButton {
+  display: block;
+  margin: auto;
+  font-size: 1.2rem;
+}

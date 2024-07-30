@@ -1,0 +1,51 @@
+.sidebar {
+  background-color: dimgray;
+  color: white;
+  display: flex;
+  flex-direction: column;
+}
+
+.empty {
+  flex: 1;
+}
+
+.roomList {
+  margin: 20px 0;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.newRoomForm {
+  display: grid;
+  grid-template-columns: 1fr max-content max-content;
+  gap: 10px;
+  align-items: center;
+}
+
+.newRoomForm,
+.openFormButton {
+  height: 40px;
+  margin-top: 10px;
+}
+
+.profile {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+}
+
+.profileButton {
+  background-color: silver;
+  padding: 10px;
+  font-size: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  align-items: center;
+}
+
+.logoutSvg {
+  height: 24px;
+}

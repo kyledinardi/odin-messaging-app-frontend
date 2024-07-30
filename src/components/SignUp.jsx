@@ -35,26 +35,28 @@ function SignUp() {
   }
 
   return (
-    <form onSubmit={(e) => submitLogin(e)}>
-      <div className={styles.fields}>
-        <label htmlFor='username'>Username:</label>
-        <input type='text' name='username' id='username' required />
-        <label htmlFor='password'>Password:</label>
-        <input type='password' name='password' id='password' required />
-        <label htmlFor='passwordConfirmation'>Confirm Password:</label>
-        <input
-          type='password'
-          name='passwordConfirmation'
-          id='passwordConfirmation'
-          required
-        />
-      </div>
-      <div className={styles.error}>
-        {errorArray &&
-          errorArray.map((error) => <p key={error.msg}>{error.msg}</p>)}
-      </div>
-      <button>Sign Up</button>
-    </form>
+    <div className={styles.container}>
+      <form className={styles.form} onSubmit={(e) => submitLogin(e)}>
+        <div className={styles.fields}>
+          <label htmlFor='username'>Username</label>
+          <input type='text' name='username' id='username' required />
+          <label htmlFor='password'>Password</label>
+          <input type='password' name='password' id='password' required />
+          <label htmlFor='passwordConfirmation'>Confirm Password</label>
+          <input
+            type='password'
+            name='passwordConfirmation'
+            id='passwordConfirmation'
+            required
+          />
+        </div>
+        <div className={styles.error}>
+          {errorArray &&
+            errorArray.map((error) => <p key={error.msg}>{error.msg}</p>)}
+        </div>
+        <button className={styles.submitButton}>Sign Up</button>
+      </form>
+    </div>
   );
 }
 

@@ -65,11 +65,13 @@ function App() {
       oldRoom = rooms.find((room) => room.name === name);
     }
     if (userId) {
-      oldRoom = rooms.find((room) =>
-        room.users.every(
-          (user) =>
-            user._id === userId || user._id === localStorage.getItem('userId'),
-        ),
+      oldRoom = rooms.find(
+        (room) =>
+          room.users.length === 2 &&
+          room.users.some((user) => user._id === userId) &&
+          room.users.some(
+            (user) => user._id === localStorage.getItem('userId'),
+          ),
       );
     }
     if (oldRoom) {
@@ -88,7 +90,6 @@ function App() {
           users: userId ? [localStorage.getItem('userId'), userId] : [],
         }),
       });
-
       const response = await responseStream.json();
       setRooms([...rooms, response]);
       setOpenRoom(response);
@@ -96,7 +97,7 @@ function App() {
   }
 
   return (
-    <>
+    <div className='app'>
       <Sidebar
         rooms={rooms}
         users={users}
@@ -117,7 +118,7 @@ function App() {
         users={users}
         setUsers={(newUsers) => setUsers(newUsers)}
       />
-    </>
+    </div>
   );
 }
 

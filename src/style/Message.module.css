@@ -1,0 +1,30 @@
+.messageBox {
+  padding: 20px;
+  width: 300px;
+  border-radius: 20px;
+  background-color: dimgray;
+  color: white;
+}
+
+.timestamp {
+  text-align: center;
+  margin-bottom: 10px;
+}
+
+.userBox {
+  display: grid;
+  grid-template-columns: max-content 1fr;
+  gap: 10px;
+  align-items: center;
+}
+
+.messageContent,
+.buttonRow,
+.messageUpdate {
+  margin-top: 20px;
+}
+
+.buttonRow {
+  display: flex;
+  gap: 10px;
+}
