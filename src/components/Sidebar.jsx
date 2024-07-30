@@ -34,7 +34,7 @@ function Sidebar({ rooms, users, setOpenRoom, setOpenProfile, openNewRoom }) {
   }
 
   async function logout() {
-    await fetch('http://localhost:3000/users/logout', {
+    await fetch('https://odin-messaging-app-backend.fly.dev/users/logout', {
       mode: 'cors',
       headers: {
         Authorization: `Bearer ${localStorage.getItem('token')}`,

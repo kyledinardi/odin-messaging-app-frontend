@@ -31,15 +31,18 @@ function Profile({
   async function submitBio(e) {
     e.preventDefault();
 
-    const responseStream = await fetch('http://localhost:3000/users', {
-      method: 'PUT',
-      mode: 'cors',
-      headers: {
-        Authorization: `Bearer ${localStorage.getItem('token')}`,
-        'Content-Type': 'application/json',
+    const responseStream = await fetch(
+      'https://odin-messaging-app-backend.fly.dev/users',
+      {
+        method: 'PUT',
+        mode: 'cors',
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem('token')}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ bio: e.target[0].value }),
       },
-      body: JSON.stringify({ bio: e.target[0].value }),
-    });
+    );
 
     const response = await responseStream.json();
     setUsers(users.map((user) => (user === response._id ? response : user)));
@@ -53,7 +56,7 @@ function Profile({
   }
 
   async function deleteUser() {
-    await fetch('http://localhost:3000/users', {
+    await fetch('https://odin-messaging-app-backend.fly.dev/users', {
       method: 'DELETE',
       mode: 'cors',
       headers: {
@@ -70,14 +73,17 @@ function Profile({
     const formData = new FormData();
     formData.append('newPfp', e.target[0].files[0]);
 
-    const responseStream = await fetch('http://localhost:3000/users/picture', {
-      method: 'PUT',
-      mode: 'cors',
-      headers: {
-        Authorization: `Bearer ${localStorage.getItem('token')}`,
+    const responseStream = await fetch(
+      'https://odin-messaging-app-backend.fly.dev/users/picture',
+      {
+        method: 'PUT',
+        mode: 'cors',
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem('token')}`,
+        },
+        body: formData,
       },
-      body: formData,
-    });
+    );
 
     const response = await responseStream.json();
     setChangingPfp(false);

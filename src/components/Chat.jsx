@@ -13,7 +13,9 @@ function Chat({ room }) {
 
   useEffect(() => {
     if (room) {
-      fetch(`http://localhost:3000/messages/${room._id}`, { mode: 'cors' })
+      fetch(`https://odin-messaging-app-backend.fly.dev/messages/${room._id}`, {
+        mode: 'cors',
+      })
         .then((response) => response.json())
         .then((response) => setMessages(response.messages))
         .catch((err) => {
@@ -57,14 +59,17 @@ function Chat({ room }) {
     formData.append('messageText', e.target[2].value);
     formData.append('roomId', room._id);
 
-    const responseStream = await fetch('http://localhost:3000/messages', {
-      method: 'POST',
-      mode: 'cors',
-      headers: {
-        Authorization: `Bearer ${localStorage.getItem('token')}`,
+    const responseStream = await fetch(
+      'https://odin-messaging-app-backend.fly.dev/messages',
+      {
+        method: 'POST',
+        mode: 'cors',
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem('token')}`,
+        },
+        body: formData,
       },
-      body: formData,
-    });
+    );
 
     const response = await responseStream.json();
     e.target.reset();

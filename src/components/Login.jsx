@@ -8,9 +8,10 @@ function Login() {
 
   async function submitLogin(e) {
     e.preventDefault();
-
-    try {
-      const responseStream = await fetch('http://localhost:3000/users/login', {
+    
+    const responseStream = await fetch(
+      'https://odin-messaging-app-backend.fly.dev/users/login',
+      {
         method: 'Post',
         mode: 'cors',
         headers: { 'Content-Type': 'application/json' },
@@ -18,20 +19,18 @@ function Login() {
           username: e.target[0].value,
           password: e.target[1].value,
         }),
-      });
+      },
+    );
 
-      const response = await responseStream.json();
+    const response = await responseStream.json();
 
-      if (!response.user) {
-        e.target.reset();
-        setErrorMessage(response.message);
-      } else {
-        localStorage.setItem('token', response.token);
-        localStorage.setItem('userId', response.user._id);
-        navigate('/');
-      }
-    } catch (err) {
-      throw new Error(err);
+    if (!response.user) {
+      e.target.reset();
+      setErrorMessage(response.message);
+    } else {
+      localStorage.setItem('token', response.token);
+      localStorage.setItem('userId', response.user._id);
+      navigate('/');
     }
   }
 

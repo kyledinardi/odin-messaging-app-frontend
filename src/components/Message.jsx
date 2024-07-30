@@ -9,7 +9,7 @@ function Message({ message, changeMessages }) {
     e.preventDefault();
 
     const responseStream = await fetch(
-      `http://localhost:3000/messages/${messageId}`,
+      `https://odin-messaging-app-backend.fly.dev/messages/${messageId}`,
       {
         method: 'PUT',
         mode: 'cors',
@@ -28,7 +28,7 @@ function Message({ message, changeMessages }) {
 
   async function deleteMessage(messageId) {
     const responseStream = await fetch(
-      `http://localhost:3000/messages/${messageId}`,
+      `https://odin-messaging-app-backend.fly.dev/messages/${messageId}`,
       {
         method: 'DELETE',
         mode: 'cors',
@@ -44,7 +44,9 @@ function Message({ message, changeMessages }) {
 
   return (
     <>
-      <p className={styles.timestamp}>{new Date(message.timestamp).toLocaleString()}</p>
+      <p className={styles.timestamp}>
+        {new Date(message.timestamp).toLocaleString()}
+      </p>
       <div className={styles.messageBox}>
         <div className={styles.userBox}>
           <img

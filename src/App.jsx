@@ -13,7 +13,7 @@ function App() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    fetch('http://localhost:3000/rooms', {
+    fetch('https://odin-messaging-app-backend.fly.dev/rooms', {
       mode: 'cors',
       headers: {
         Authorization: `Bearer ${localStorage.getItem('token')}`,
@@ -38,12 +38,15 @@ function App() {
 
   useEffect(() => {
     async function fetchUsers() {
-      const responseStream = await fetch('http://localhost:3000/users', {
-        mode: 'cors',
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem('token')}`,
+      const responseStream = await fetch(
+        'https://odin-messaging-app-backend.fly.dev/users',
+        {
+          mode: 'cors',
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem('token')}`,
+          },
         },
-      });
+      );
 
       const response = await responseStream.json();
       setUsers(response.users);
@@ -77,19 +80,22 @@ function App() {
     if (oldRoom) {
       setOpenRoom(oldRoom);
     } else {
-      const responseStream = await fetch('http://localhost:3000/rooms', {
-        method: 'POST',
-        mode: 'cors',
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem('token')}`,
-          'Content-Type': 'application/json',
+      const responseStream = await fetch(
+        'https://odin-messaging-app-backend.fly.dev/rooms',
+        {
+          method: 'POST',
+          mode: 'cors',
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem('token')}`,
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            name: name || '',
+            isPublic: !userId,
+            users: userId ? [localStorage.getItem('userId'), userId] : [],
+          }),
         },
-        body: JSON.stringify({
-          name: name || '',
-          isPublic: !userId,
-          users: userId ? [localStorage.getItem('userId'), userId] : [],
-        }),
-      });
+      );
       const response = await responseStream.json();
       setRooms([...rooms, response]);
       setOpenRoom(response);
