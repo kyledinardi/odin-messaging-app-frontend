@@ -3,7 +3,7 @@ import { useState, useEffect, useRef } from 'react';
 import Message from './Message.jsx';
 import styles from '../style/Chat.module.css';
 
-function Chat({ room }) {
+function Chat({ room, chatOpen }) {
   const [messages, setMessages] = useState(null);
   const [isMessage, setIsMessage] = useState(false);
   const [messageImage, setMessageImage] = useState(null);
@@ -97,7 +97,7 @@ function Chat({ room }) {
   }
 
   return (
-    <main className={styles.chat}>
+    <main className={`${styles.chat}${chatOpen ? ` ${styles.isVisible}` : ''}`}>
       {messages ? (
         <>
           <h1>
@@ -203,6 +203,7 @@ function Chat({ room }) {
 Chat.propTypes = {
   users: PropTypes.array,
   room: PropTypes.object,
+  chatOpen: PropTypes.bool,
 };
 
 export default Chat;

@@ -1,7 +1,7 @@
 import PropTypes from 'prop-types';
 import styles from '../style/UserList.module.css';
 
-function UserList({ users, setOpenProfile }) {
+function UserList({ users, setOpenProfile, userListOpen }) {
   function filterUsersByStatus(isOnline) {
     return users.filter((user) =>
       Date.now() - new Date(user.lastOnline) < 300000 ? isOnline : !isOnline,
@@ -9,7 +9,11 @@ function UserList({ users, setOpenProfile }) {
   }
 
   return (
-    <aside className={styles.userList}>
+    <aside
+      className={`${styles.userList}${
+        userListOpen ? ` ${styles.isVisible}` : ''
+      }`}
+    >
       {users ? (
         <>
           <h2>Online</h2>
@@ -59,6 +63,7 @@ function UserList({ users, setOpenProfile }) {
 UserList.propTypes = {
   users: PropTypes.array,
   setOpenProfile: PropTypes.func,
+  userListOpen: PropTypes.bool,
 };
 
 export default UserList;

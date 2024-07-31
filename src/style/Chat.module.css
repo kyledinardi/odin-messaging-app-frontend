@@ -1,9 +1,11 @@
 .chat {
   background-color: silver;
-  display: flex;
   flex-direction: column;
-  box-sizing: border-box;
-  height: 100vh;
+  display: none;
+}
+
+.isVisible {
+  display: flex;
 }
 
 .messageList {
@@ -54,4 +56,10 @@
 
 .sendButton:disabled {
   fill: grey;
+}
+
+@media (min-width: 1200px) {
+  .chat {
+    height: 100vh;
+  }
 }

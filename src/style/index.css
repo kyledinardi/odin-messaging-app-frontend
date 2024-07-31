@@ -19,14 +19,30 @@ ul {
   margin: 0;
 }
 
-.app {
-  display: grid;
-  grid-template-columns: 1fr 2fr 1fr;
+.navbar {
+  background-color: gray;
+  display: flex;
+  justify-content: space-between;
+  padding: 10px;
+  position: sticky;
+  top: 0;
+}
+
+.navbar button {
+  width: 29px;
+  height: 29px;
+  padding: 5px;
 }
 
 aside,
 main {
   padding: 30px;
+  box-sizing: border-box;
+  height: calc(100vh - 49px);
+}
+
+h1 {
+  text-align: center;
 }
 
 textarea {
@@ -62,4 +78,34 @@ label {
   height: 34px;
   padding: 5px;
   border-radius: 50%;
+}
+
+@media (min-width: 600px) {
+  .sidebarButton {
+    display: none;
+  }
+
+  .userListButton {
+    margin-left: auto;
+  }
+
+  .app {
+    display: grid;
+    grid-template-columns: 1fr 2fr;
+  }
+}
+
+@media (min-width: 1200px) {
+  .navbar {
+    display: none;
+  }
+
+  .app {
+    grid-template-columns: 1fr 2fr 1fr;
+  }
+
+  aside,
+  main {
+    height: 100vh;
+  }
 }
