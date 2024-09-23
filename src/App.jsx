@@ -16,8 +16,9 @@ function App() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    fetch('https://odin-messaging-app-backend.fly.dev/rooms', {
+    fetch('http://localhost:3000/rooms', {
       mode: 'cors',
+      
       headers: {
         Authorization: `Bearer ${localStorage.getItem('token')}`,
       },
@@ -30,26 +31,29 @@ function App() {
 
         return response.json();
       })
-      .then((response) => {
-        const roomId =
-          localStorage.getItem('roomId') || '669551549b1e2dd57344d631';
 
+      .then((response) => {
         setRooms(response.rooms);
-        setOpenRoom(response.rooms.find((room) => room._id === roomId));
+        const roomId = parseInt(localStorage.getItem('roomId'), 10);
+        let roomToOpen = response.rooms.find((room) => room.id === roomId);
+
+        if (!roomToOpen) {
+          roomToOpen = response.rooms.find((room) => room.name === 'General');
+        }
+
+        setOpenRoom(roomToOpen);
       });
   }, [navigate]);
 
   useEffect(() => {
     async function fetchUsers() {
-      const responseStream = await fetch(
-        'https://odin-messaging-app-backend.fly.dev/users',
-        {
-          mode: 'cors',
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem('token')}`,
-          },
+      const responseStream = await fetch('http://localhost:3000/users', {
+        mode: 'cors',
+
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem('token')}`,
         },
-      );
+      });
 
       const response = await responseStream.json();
       setUsers(response.users);
@@ -75,35 +79,37 @@ function App() {
     if (name) {
       oldRoom = rooms.find((room) => room.name === name);
     }
+
     if (userId) {
       oldRoom = rooms.find(
         (room) =>
           room.users.length === 2 &&
-          room.users.some((user) => user._id === userId) &&
+          room.users.some((user) => user.id === userId) &&
+
           room.users.some(
-            (user) => user._id === localStorage.getItem('userId'),
+            (user) => user.id === parseInt(localStorage.getItem('userId'), 10),
           ),
       );
     }
+
     if (oldRoom) {
       setOpenRoom(oldRoom);
     } else {
-      const responseStream = await fetch(
-        'https://odin-messaging-app-backend.fly.dev/rooms',
-        {
-          method: 'POST',
-          mode: 'cors',
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem('token')}`,
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
-            name: name || '',
-            isPublic: !userId,
-            users: userId ? [localStorage.getItem('userId'), userId] : [],
-          }),
+      const responseStream = await fetch('http://localhost:3000/rooms', {
+        method: 'POST',
+        mode: 'cors',
+
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem('token')}`,
+          'Content-Type': 'application/json',
         },
-      );
+
+        body: JSON.stringify({
+          name: name || '',
+          isPublic: !userId,
+          userId,
+        }),
+      });
 
       const response = await responseStream.json();
       setRooms([...rooms, response]);

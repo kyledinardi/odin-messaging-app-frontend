@@ -31,21 +31,20 @@ function Profile({
   async function submitBio(e) {
     e.preventDefault();
 
-    const responseStream = await fetch(
-      'https://odin-messaging-app-backend.fly.dev/users',
-      {
-        method: 'PUT',
-        mode: 'cors',
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem('token')}`,
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ bio: e.target[0].value }),
+    const responseStream = await fetch('http://localhost:3000/users', {
+      method: 'PUT',
+      mode: 'cors',
+
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem('token')}`,
+        'Content-Type': 'application/json',
       },
-    );
+
+      body: JSON.stringify({ bio: e.target[0].value }),
+    });
 
     const response = await responseStream.json();
-    setUsers(users.map((user) => (user === response._id ? response : user)));
+    setUsers(users.map((user) => (user === response.id ? response : user)));
     setOpenProfile(response);
     setEdit(false);
   }
@@ -56,9 +55,10 @@ function Profile({
   }
 
   async function deleteUser() {
-    await fetch('https://odin-messaging-app-backend.fly.dev/users', {
+    await fetch('http://localhost:3000/users', {
       method: 'DELETE',
       mode: 'cors',
+
       headers: {
         Authorization: `Bearer ${localStorage.getItem('token')}`,
       },
@@ -73,24 +73,21 @@ function Profile({
     const formData = new FormData();
     formData.append('newPfp', e.target[0].files[0]);
 
-    const responseStream = await fetch(
-      'https://odin-messaging-app-backend.fly.dev/users/picture',
-      {
-        method: 'PUT',
-        mode: 'cors',
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem('token')}`,
-        },
-        body: formData,
+    const responseStream = await fetch('http://localhost:3000/users/picture', {
+      method: 'PUT',
+      mode: 'cors',
+
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem('token')}`,
       },
-    );
+
+      body: formData,
+    });
 
     const response = await responseStream.json();
     setChangingPfp(false);
     setOpenProfile(response);
-    setUsers(
-      users.map((user) => (user._id === response._id ? response : user)),
-    );
+    setUsers(users.map((user) => (user.id === response.id ? response : user)));
   }
 
   function handleFileInputChange(e) {
@@ -119,7 +116,7 @@ function Profile({
           />
           <h2>{openProfile.username}</h2>
         </div>
-        {openProfile._id === localStorage.getItem('userId') && (
+        {openProfile.id === parseInt(localStorage.getItem('userId'), 10) && (
           <>
             <form encType='multipart/form-data' onSubmit={(e) => changePfp(e)}>
               <input
@@ -189,8 +186,12 @@ function Profile({
                     Are you sure you want to delete your account?
                   </p>
                   <div className={styles.buttons}>
-                    <button onClick={() => deleteUser()}>Yes</button>
-                    <button onClick={() => setDeleting(false)}>No</button>
+                    <button type='button' onClick={() => deleteUser()}>
+                      Yes
+                    </button>
+                    <button type='button' onClick={() => setDeleting(false)}>
+                      No
+                    </button>
                   </div>
                 </div>
               )}
@@ -228,10 +229,10 @@ function Profile({
             )}
           </>
         )}
-        {openProfile._id !== localStorage.getItem('userId') && (
+        {openProfile.id !== parseInt(localStorage.getItem('userId'), 10) && (
           <button
             className={styles.pmButton}
-            onClick={() => sendPrivateMessage(openProfile._id)}
+            onClick={() => sendPrivateMessage(openProfile.id)}
           >
             Send Private Message
           </button>

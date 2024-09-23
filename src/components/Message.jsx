@@ -9,14 +9,16 @@ function Message({ message, changeMessages }) {
     e.preventDefault();
 
     const responseStream = await fetch(
-      `https://odin-messaging-app-backend.fly.dev/messages/${messageId}`,
+      `http://localhost:3000/messages/${messageId}`,
       {
         method: 'PUT',
         mode: 'cors',
+
         headers: {
           Authorization: `Bearer ${localStorage.getItem('token')}`,
           'Content-Type': 'application/json',
         },
+
         body: JSON.stringify({ text: e.target[0].value }),
       },
     );
@@ -28,10 +30,11 @@ function Message({ message, changeMessages }) {
 
   async function deleteMessage(messageId) {
     const responseStream = await fetch(
-      `https://odin-messaging-app-backend.fly.dev/messages/${messageId}`,
+      `http://localhost:3000/messages/${messageId}`,
       {
         method: 'DELETE',
         mode: 'cors',
+        
         headers: {
           Authorization: `Bearer ${localStorage.getItem('token')}`,
         },
@@ -51,13 +54,13 @@ function Message({ message, changeMessages }) {
         <div className={styles.userBox}>
           <img
             className='profilePicture'
-            src={message.sender.pictureUrl}
+            src={message.User.pictureUrl}
             alt=''
           />
-          <strong className={styles.username}>{message.sender.username}</strong>
+          <strong className={styles.username}>{message.User.username}</strong>
         </div>
         {editing ? (
-          <form onSubmit={(e) => updateMessage(e, message._id)}>
+          <form onSubmit={(e) => updateMessage(e, message.id)}>
             <input
               className={styles.messageUpdate}
               type='text'
@@ -66,8 +69,15 @@ function Message({ message, changeMessages }) {
               defaultValue={message.text}
               required
             />
-            {message.imageUrl && <img src={message.imageUrl} alt='' />}
-            {message.sender._id === localStorage.getItem('userId') && (
+            {message.imageUrl && (
+              <img
+                className={styles.messageImage}
+                src={message.imageUrl}
+                alt=''
+              />
+            )}
+            {message.userId ===
+              parseInt(localStorage.getItem('userId'), 10) && (
               <div className={styles.buttonRow}>
                 <button className='svgButton'>
                   <svg
@@ -92,7 +102,7 @@ function Message({ message, changeMessages }) {
                 <button
                   type='button'
                   className='svgButton'
-                  onClick={() => deleteMessage(message._id)}
+                  onClick={() => deleteMessage(message.id)}
                 >
                   <svg
                     xmlns='http://www.w3.org/2000/svg'
@@ -108,8 +118,15 @@ function Message({ message, changeMessages }) {
           <div>
             <div className={styles.messageContent}>
               <p>{message.text}</p>
-              {message.imageUrl && <img src={message.imageUrl} alt='' />}
-              {message.sender._id === localStorage.getItem('userId') && (
+              {message.imageUrl && (
+                <img
+                  className={styles.messageImage}
+                  src={message.imageUrl}
+                  alt=''
+                />
+              )}
+              {message.userId ===
+                parseInt(localStorage.getItem('userId'), 10) && (
                 <div className={styles.buttonRow}>
                   <button
                     className='svgButton'
@@ -124,7 +141,7 @@ function Message({ message, changeMessages }) {
                   </button>
                   <button
                     className='svgButton'
-                    onClick={() => deleteMessage(message._id)}
+                    onClick={() => deleteMessage(message.id)}
                   >
                     <svg
                       xmlns='http://www.w3.org/2000/svg'

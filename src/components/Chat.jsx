@@ -13,13 +13,17 @@ function Chat({ room, chatOpen }) {
 
   useEffect(() => {
     if (room) {
-      fetch(`https://odin-messaging-app-backend.fly.dev/messages/${room._id}`, {
+      fetch(`http://localhost:3000/messages/${room.id}`, {
         mode: 'cors',
+
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem('token')}`,
+        },
       })
         .then((response) => response.json())
-        .then((response) => setMessages(response.messages))
-        .catch((err) => {
-          throw new Error(err);
+
+        .then((response) => {
+          setMessages(response.messages);
         });
     }
   }, [room]);
@@ -36,13 +40,15 @@ function Chat({ room, chatOpen }) {
     switch (operation) {
       case 'update':
         newMessages = messages.map((message) =>
-          message._id === messageToChange._id ? messageToChange : message,
+          message.id === messageToChange.id ? messageToChange : message,
         );
+
         break;
       case 'delete':
         newMessages = messages.filter(
-          (message) => message._id !== messageToChange._id,
+          (message) => message.id !== messageToChange.id,
         );
+
         break;
       default:
         throw new Error(`Operation ${operation} is not available`);
@@ -57,19 +63,18 @@ function Chat({ room, chatOpen }) {
 
     formData.append('messageImage', e.target[0].files[0]);
     formData.append('messageText', e.target[2].value);
-    formData.append('roomId', room._id);
+    formData.append('roomId', room.id);
 
-    const responseStream = await fetch(
-      'https://odin-messaging-app-backend.fly.dev/messages',
-      {
-        method: 'POST',
-        mode: 'cors',
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem('token')}`,
-        },
-        body: formData,
+    const responseStream = await fetch('http://localhost:3000/messages', {
+      method: 'POST',
+      mode: 'cors',
+
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem('token')}`,
       },
-    );
+
+      body: formData,
+    });
 
     const response = await responseStream.json();
     e.target.reset();
@@ -105,7 +110,8 @@ function Chat({ room, chatOpen }) {
               ? `${room.name} Chat`
               : `Chat with ${
                   room.users.find(
-                    (user) => user._id !== localStorage.getItem('userId'),
+                    (user) =>
+                      user.id !== parseInt(localStorage.getItem('userId'), 10),
                   ).username
                 }`}
           </h1>
@@ -113,9 +119,10 @@ function Chat({ room, chatOpen }) {
             <div className={styles.empty}></div>
             {messages.map((message) => (
               <div
-                key={message._id}
+                key={message.id}
                 className={
-                  message.sender._id === localStorage.getItem('userId')
+                  message.userId ===
+                  parseInt(localStorage.getItem('userId'), 10)
                     ? styles.currentUserMessage
                     : styles.notCurrentUserMessage
                 }
@@ -177,7 +184,8 @@ function Chat({ room, chatOpen }) {
               placeholder={`Message ${
                 room.name ||
                 room.users.find(
-                  (user) => user._id !== localStorage.getItem('userId'),
+                  (user) =>
+                    user.id !== parseInt(localStorage.getItem('userId'), 10),
                 ).username
               }`}
               onChange={() => handleInputChange()}

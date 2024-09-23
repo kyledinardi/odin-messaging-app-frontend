@@ -23,6 +23,13 @@
   margin-top: 20px;
 }
 
+.messageImage {
+  width: 500px;
+  height: auto;
+  margin-top: 10px;
+  border-radius: 10px;
+}
+
 .buttonRow {
   display: flex;
   gap: 10px;

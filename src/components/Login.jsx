@@ -10,11 +10,12 @@ function Login() {
     e.preventDefault();
     
     const responseStream = await fetch(
-      'https://odin-messaging-app-backend.fly.dev/users/login',
+      'http://localhost:3000/users/login',
       {
         method: 'Post',
         mode: 'cors',
         headers: { 'Content-Type': 'application/json' },
+        
         body: JSON.stringify({
           username: e.target[0].value,
           password: e.target[1].value,
@@ -29,7 +30,7 @@ function Login() {
       setErrorMessage(response.message);
     } else {
       localStorage.setItem('token', response.token);
-      localStorage.setItem('userId', response.user._id);
+      localStorage.setItem('userId', response.user.id);
       navigate('/');
     }
   }

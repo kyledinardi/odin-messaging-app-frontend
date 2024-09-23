@@ -19,7 +19,7 @@ function Sidebar({
   useEffect(() => {
     if (users) {
       const thisUser = users.find(
-        (user) => user._id === localStorage.getItem('userId'),
+        (user) => user.id === parseInt(localStorage.getItem('userId'), 10),
       );
 
       setCurrentUser(thisUser);
@@ -33,7 +33,7 @@ function Sidebar({
   function setRoom(newRoom) {
     setOpenRoom(newRoom);
     closeSidebar();
-    localStorage.setItem('roomId', newRoom._id);
+    localStorage.setItem('roomId', newRoom.id);
   }
 
   async function createRoom(e) {
@@ -43,8 +43,9 @@ function Sidebar({
   }
 
   async function logout() {
-    await fetch('https://odin-messaging-app-backend.fly.dev/users/logout', {
+    await fetch('http://localhost:3000/users/logout', {
       mode: 'cors',
+      
       headers: {
         Authorization: `Bearer ${localStorage.getItem('token')}`,
       },
@@ -112,7 +113,7 @@ function Sidebar({
               )}
               <ul className={styles.roomList}>
                 {filterRooms(true).map((publicRoom) => (
-                  <li key={publicRoom._id}>
+                  <li key={publicRoom.id}>
                     <button onClick={() => setRoom(publicRoom)}>
                       {publicRoom.name}
                     </button>
@@ -125,12 +126,13 @@ function Sidebar({
                 <h2>Private Messages</h2>
                 <ul className={styles.roomList}>
                   {filterRooms(false).map((privateRoom) => (
-                    <li key={privateRoom._id}>
+                    <li key={privateRoom.id}>
                       <button onClick={() => setRoom(privateRoom)}>
                         {
                           privateRoom.users.find(
                             (user) =>
-                              user._id !== localStorage.getItem('userId'),
+                              user.id !==
+                              parseInt(localStorage.getItem('userId'), 10),
                           ).username
                         }
                       </button>

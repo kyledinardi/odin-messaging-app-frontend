@@ -11,11 +11,12 @@ function SignUp() {
 
     try {
       const responseStream = await fetch(
-        'https://odin-messaging-app-backend.fly.dev/users',
+        'http://localhost:3000/users',
         {
           method: 'Post',
           mode: 'cors',
           headers: { 'Content-Type': 'application/json' },
+          
           body: JSON.stringify({
             username: e.target[0].value,
             password: e.target[1].value,

@@ -19,6 +19,5 @@ module.exports = {
       'warn',
       { allowConstantExport: true },
     ],
-    'no-underscore-dangle': ['error', { allow: ['_id'] }],
   },
 };

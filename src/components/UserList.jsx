@@ -19,7 +19,7 @@ function UserList({ users, setOpenProfile, userListOpen }) {
           <h2>Online</h2>
           <ul className={styles.listSegment}>
             {filterUsersByStatus(true).map((user) => (
-              <li key={user._id}>
+              <li key={user.id}>
                 <button
                   className={styles.userButton}
                   onClick={() => setOpenProfile(user)}
@@ -37,7 +37,7 @@ function UserList({ users, setOpenProfile, userListOpen }) {
           <h2>Offline</h2>
           <ul className={styles.listSegment}>
             {filterUsersByStatus(false).map((user) => (
-              <li key={user._id}>
+              <li key={user.id}>
                 <button
                   className={styles.userButton}
                   onClick={() => setOpenProfile(user)}
